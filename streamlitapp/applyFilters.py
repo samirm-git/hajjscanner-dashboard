@@ -11,7 +11,7 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
     if shifting_choice == "Shifting only":
         df = df[df['isShifting'] == True]
     elif shifting_choice == "Non-shifting only":
-        df = df[df['isSifting'] == False]
+        df = df[df['isShifting'] == False]
   
     #--- boolean options (hasAc, hasWifi isVisaIncluded)
     hasAc, hasWifi, isVisaIncluded = st.sidebar.columns(3)
@@ -69,4 +69,5 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
     if excluded:
         df = df[~df['company'].isin(excluded)]
 
+    df.dropna(subset=['company','ppp'], inplace=True)
     return df

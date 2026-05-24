@@ -5,7 +5,8 @@ WORKDIR /app
 RUN pip install --no-cache-dir \
     streamlit \
     pandas \
-    boto3
+    boto3 \
+    streamlit-carousel
     # altair \
 
 COPY . .

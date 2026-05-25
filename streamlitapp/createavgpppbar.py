@@ -23,7 +23,6 @@ def create_avg_ppp_bar(df: pd.DataFrame, company_selection, company_domain):
             tooltip=['company', alt.Tooltip('avg_ppp:Q', format=',.0f', title='Avg PPP (£)')]
         )
         .add_params(company_selection)
-        .properties(height=400)
     )
 
     return chart

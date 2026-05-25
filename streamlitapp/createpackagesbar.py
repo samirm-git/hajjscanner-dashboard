@@ -5,23 +5,22 @@ import altair as alt
 def create_packages_bar(df: pd.DataFrame, bar_selection, company_domain):
     st.subheader("📊 Price per person by package")
 
-    has_ppp = df.sort_values(['company', 'ppp']).reset_index()
-    if has_ppp.empty:
+    df_sorted = df.sort_values(['company', 'ppp']).reset_index()
+    if df_sorted.empty:
         st.info("No packages with price data match the current filters.")
         return
 
 
-    bar_width   = max(20, min(20, 1200 // max(len(has_ppp), 1)))
-    chart_width = max(800, len(has_ppp) * (bar_width + 4))
-    chart_width = 800
+    bar_width   = max(20, min(20, 1200 // max(len(df_sorted), 1)))
+    chart_width = max(800, len(df_sorted) * (bar_width + 4))
 
 
     chart = (
-        alt.Chart(has_ppp)
+        alt.Chart(df_sorted)
         .mark_bar()
         .encode(
-            x=alt.X('index:O', sort=list(has_ppp['index']), title='Hajj Packages',  axis=alt.Axis(labels=False, ticks=False)),
-            y=alt.Y('ppp:Q', title='Price per person (£)', scale=alt.Scale(domain=[0, has_ppp['ppp'].max()])),
+            x=alt.X('index:O', sort=list(df_sorted['index']), title='Hajj Packages',  axis=alt.Axis(labels=False, ticks=False)),
+            y=alt.Y('ppp:Q', title='Price per person (£)', scale=alt.Scale(domain=[0, df_sorted['ppp'].max()])),
 
             color=alt.Color('company:N',
                             scale=alt.Scale(domain=company_domain, scheme='tableau20'),
@@ -40,7 +39,7 @@ def create_packages_bar(df: pd.DataFrame, bar_selection, company_domain):
         .interactive(bind_y=False)
     )
     st.caption(
-        f"Showing {len(has_ppp)} packages with price data, grouped by company. "
+        f"Showing {len(df_sorted)} packages with price data, grouped by company. "
         "Click a bar for details."
     )
 

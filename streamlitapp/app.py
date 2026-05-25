@@ -44,7 +44,7 @@ def main():
 
   company_piechart = create_piechart(df_filtered, company_selection, company_domain)
   company_avg_ppp = create_avg_ppp_bar(df_filtered, company_selection, company_domain)
-  if company_piechart is not None:
+  if company_piechart is not None and company_avg_ppp is not None:
     st.subheader("🔍 Package Providers Overview")
     st.caption(f"Based on {len(df)} packages with price data.")
     st.altair_chart(company_piechart & company_avg_ppp, width='stretch', theme='streamlit')

@@ -11,7 +11,8 @@ def create_piechart(df: pd.DataFrame, company_selection, company_domain):
                     opacity=alt.condition(company_selection, alt.value(1), alt.value(0.25)),
                     tooltip=[alt.Tooltip('company:N'), alt.Tooltip('count:Q'), alt.Tooltip('percent:Q', format='.1%')]
               
-              ).add_params(company_selection))
+              ).add_params(company_selection)
+              )
 
 
     return chart

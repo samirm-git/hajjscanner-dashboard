@@ -8,7 +8,7 @@ An interactive data dashboard for exploring and comparing Hajj and Umrah package
 
 ## 🌐 Live App
  
-👉 **[hajjscanner-dashboard.streamlit.app](https://hajjscanner-dashboard.streamlit.app)**
+👉 **[hajjumrahscanner.com](https://hajjumrahscanner.com)**
  
 ---
 

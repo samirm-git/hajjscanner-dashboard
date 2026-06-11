@@ -18,7 +18,7 @@ def create_avg_ppp_bar(df: pd.DataFrame, company_selection, company_domain):
             y=alt.Y('avg_ppp:Q', title='Avg price per person (£)'),
             color=alt.Color('company:N',
                             scale=alt.Scale(domain=company_domain, scheme='tableau20'),
-                            legend=alt.Legend(title='Company')),
+                            legend=alt.Legend(title='Company',   titleAnchor='middle', orient='top', columns=2, offset=0)),
             opacity=alt.condition(company_selection, alt.value(1), alt.value(0.25)),
             tooltip=['company', alt.Tooltip('avg_ppp:Q', format=',.0f', title='Avg PPP (£)')]
         )

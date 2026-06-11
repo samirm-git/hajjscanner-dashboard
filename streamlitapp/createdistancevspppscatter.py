@@ -4,7 +4,7 @@ import altair as alt
 
 def create_distance_vs_ppp_scatter(df: pd.DataFrame, selection):
     st.subheader("📍 Distance to Haram vs Price per person")
-    
+
     company_df = df[['company', 'url', 'ppp']]
     if company_df.empty:
       st.info("No packages with both price and distance data match the current filters.")
@@ -53,6 +53,7 @@ def create_distance_vs_ppp_scatter(df: pd.DataFrame, selection):
     st.caption(
         f"Showing {len(makkah_df)} Makkah data-points and {len(madinah_df)} Madinah data-points."
     )
+
 
     return chart 
     # st.altair_chart(chart, width='stretch', theme='streamlit')

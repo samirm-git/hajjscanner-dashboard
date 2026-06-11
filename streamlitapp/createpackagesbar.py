@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+
 def create_packages_bar(df: pd.DataFrame, bar_selection, company_domain):
     st.subheader("📊 Price per person by package")
 
@@ -35,7 +36,6 @@ def create_packages_bar(df: pd.DataFrame, bar_selection, company_domain):
             ],
         )
         .add_params(bar_selection)
-        .properties(width=chart_width, height=420)
         .interactive(bind_y=False)
     )
     st.caption(

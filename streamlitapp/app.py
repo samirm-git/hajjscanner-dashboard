@@ -1,7 +1,7 @@
 import streamlit as st
 import altair as alt
 
-from dataLoader import loadData 
+from dataLoader import loadData2 
 from applyFilters import apply_package_filters
 
 from createavgpppbar import create_avg_ppp_bar
@@ -23,7 +23,7 @@ def main():
   st.set_page_config(page_title="Hajj Package Dashboard", layout="wide")
   st.title("🕋 Hajj Package Dashboard")
 
-  df, err = loadData(queryName)
+  df, err = loadData2()
   if err is not None:
       st.error(f"Error loading data from S3: {err}")
       st.stop()
@@ -46,8 +46,8 @@ def main():
   company_avg_ppp = create_avg_ppp_bar(df_filtered, company_selection, company_domain)
   if company_piechart is not None and company_avg_ppp is not None:
     st.subheader("🔍 Package Providers Overview")
-    st.caption(f"Based on {len(df)} packages with price data.")
-    st.altair_chart(company_piechart & company_avg_ppp, width='stretch', theme='streamlit')
+    st.caption(f"Based on {len(df_filtered)} packages with price data.")
+    st.altair_chart(company_piechart & company_avg_ppp, theme='streamlit')
     st.divider()
   
   

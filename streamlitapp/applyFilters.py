@@ -13,6 +13,8 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
       filtered = filter_by_shifting(filtered)
       filtered = filter_by_stars(filtered)
       filtered = filter_by_visa(filtered)
+      filtered = filter_by_ziyarat(filtered)
+      filtered = filter_by_season_month(filtered)
       filtered = filter_by_total_days(filtered)
       filtered = filter_by_amenities(filtered)
       filtered = filter_by_distanceToHaram(filtered)
@@ -22,8 +24,10 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
 
     return filtered
 
-
 def filter_by_shifting(df: pd.DataFrame) -> pd.DataFrame:
+    if "isShifting" not in df.columns:
+        return df
+
     choice = st.segmented_control(
         "Package type",
         options=["All", "Shifting only", "Non-shifting only"],
@@ -61,6 +65,51 @@ def filter_by_visa(df: pd.DataFrame) -> pd.DataFrame:
   visabox = st.checkbox("Visa Included", key="filter_visaincluded")
   if visabox:
      df = df.loc[df["isVisaIncluded"].eq(True)]
+
+  return df
+
+def filter_by_ziyarat(df: pd.DataFrame) -> pd.DataFrame:
+  if "isziyaratincluded" not in df.columns:
+      return df
+
+  ziyaratbox = st.checkbox("Ziyarat Included", key="filter_ziyaratincluded")
+  if ziyaratbox:
+     df = df.loc[df["isziyaratincluded"].eq(True)]
+
+  return df
+
+def filter_by_season_month(df: pd.DataFrame) -> pd.DataFrame:
+  if "season" not in df.columns and "month" not in df.columns:
+      return df
+
+  season_order = ["Spring", "Summer", "Autumn", "Winter"]
+  month_order = ["January", "February", "March", "April", "May", "June",
+                 "July", "August", "September", "October", "November", "December"]
+
+  with st.container(border=True):
+    st.markdown("**Travel timing**")
+
+    if "season" in df.columns:
+      available_seasons = [s for s in season_order if s in df["season"].dropna().unique()]
+      if available_seasons:
+        selected_seasons = st.multiselect(
+            "Season", options=available_seasons, default=[], key="filter_season",
+            help="Leave empty to include all seasons (and packages with no season specified).",
+        )
+        if selected_seasons:
+          df = df.loc[df["season"].isin(selected_seasons) | df["season"].isna()]
+
+    if "month" in df.columns:
+      available_months = [m for m in month_order if m in df["month"].dropna().unique()]
+      if available_months:
+        selected_months = st.multiselect(
+            "Month", options=available_months, default=[], key="filter_month",
+            help="Leave empty to include all months (and packages with no month specified).",
+        )
+        if selected_months:
+          df = df.loc[df["month"].isin(selected_months) | df["month"].isna()]
+
+    st.caption("**Packages with no travel timing specified are always included.**")
 
   return df
 
@@ -128,6 +177,8 @@ def filter_by_walkToHaram(df: pd.DataFrame) -> pd.DataFrame:
 
 def filter_by_company_exclusions(df: pd.DataFrame) -> pd.DataFrame:
   companies = sorted(df["company"].dropna().unique().tolist())
+  if len(companies) == 1:
+     return df
 
   excluded = st.multiselect(
       "Exclude companies",

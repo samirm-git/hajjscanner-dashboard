@@ -2,16 +2,11 @@ import streamlit as st
 import pandas as pd
 from streamlit_carousel import carousel
 
-def _splitListNoneValues(l):
-    noneValueList = []
-    notNoneList = []
-    for name, text in l:
-      if text is None:
-        noneValueList.append(name)
-      else:
-         notNoneList.append(text)
-    
-    return notNoneList, noneValueList
+def _split_present_and_missing(fields: list[tuple[str, str | None]]) -> tuple[list[str], list[str]]:
+    """Split (field_name, formatted_value) pairs into present values and missing field names."""
+    present_values = [value for _, value in fields if value is not None]
+    missing_field_names = [name for name, value in fields if value is None]
+    return present_values, missing_field_names
 
 def _hotel_images(col, city, row):
     images = row.get(f"{city}_images") or []
@@ -40,20 +35,20 @@ def _hotel_card(col, city, row):
                   ('stars', "⭐" * int(stars) if pd.notna(stars) else None),
                   ('total days', f"{int(total_days)} days" if pd.notna(total_days) else None),
     ]
-    title_parts, missingFields = _splitListNoneValues(title_parts)
+    title_parts, missingFields = _split_present_and_missing(title_parts)
     missing_hotel_fields.extend(missingFields)
 
     amenities = [('wifi', f"`wifi {'✅' if p('hasWifi') else '❌'}`" if pd.notna(p("hasWifi")) else "`wifi ?`"),
                 ('ac',f"`ac {'✅' if p('hasAC') else '❌'}`" if pd.notna(p("hasAC")) else "`ac ?`"),
                 # ('number of beds', f"`🛏 {int(beds)} beds`" if pd.notna(beds) else None),
     ]
-    amenities, missingFields = _splitListNoneValues(amenities)
+    amenities, missingFields = _split_present_and_missing(amenities)
     missing_hotel_fields.extend(missingFields)
 
     location = [('distance to haram', f"📍 {int(distance):,} metres from Al-Haram" if pd.notna(distance) else None),
                 ('walk to haram (minutes)', f"🚶🏻‍➡️ {int(walk)} minute walk to Al-Haram" if pd.notna(walk) else None),
     ]
-    location, missingFields = _splitListNoneValues(location)
+    location, missingFields = _split_present_and_missing(location)
     missing_hotel_fields.extend(missingFields)
 
     with col:
@@ -65,26 +60,36 @@ def _hotel_card(col, city, row):
         st.caption(f"⚠️ **Missing package fields:** {" · ".join(missing_hotel_fields)}")
 
 
-def expander_panel(row):
+def expander_panel(row, expanded=True):
     stars = row.get('stars')
     ppp   = row.get('ppp')
     days  = row.get('total_days')
     tier  = row.get('tier')
     url = row.get('url')
+    islamic_month = row.get('islamicmonth')
 
     meta_items = [
     # ("tier", f"{tier} Package" if pd.notna(tier) else None),
     ("stars", "⭐" * int(stars) if pd.notna(stars) else None),
     ("total_days", f"{int(days)} days" if pd.notna(days) else None),
     ("ppp", f"£{ppp:,.0f} per person" if pd.notna(ppp) else None),
+    ("islamicmonth", f"🌙 {islamic_month}" if pd.notna(islamic_month) else None),
     ]
 
-    meta, missing_meta_fields = _splitListNoneValues(meta_items)
+    meta, missing_meta_fields = _split_present_and_missing(meta_items)
+    # islamicmonth has no equivalent in hajj data, so its absence shouldn't be
+    # flagged as a "missing field" the way a genuinely missing hajj field would be.
+    if 'islamicmonth' not in row.index:
+        missing_meta_fields = [f for f in missing_meta_fields if f != 'islamicmonth']
 
-    badges = ['`Shifting`'  if row.get('isShifting')  else '`Non Shifting`', 
-              '`✅ Visa Included`' if row.get('isVisaIncluded') else None,]
+    badges = []
+    if 'isShifting' in row.index:
+        badges.append('`Shifting`' if row.get('isShifting') else '`Non Shifting`')
+    badges.append('`✅ Visa Included`' if row.get('isVisaIncluded') else None)
+    if 'isziyaratincluded' in row.index:
+        badges.append('`🕌 Ziyarat Included`' if row.get('isziyaratincluded') else None)
 
-    with st.expander("📦 Package Details", expanded=True):
+    with st.expander("📦 Package Details", expanded=expanded):
       d1, d2 = st.columns(2, vertical_alignment='center')
 
       d1.markdown(f"### {row.get('company', '')}")

@@ -15,13 +15,18 @@ def build(df: pd.DataFrame) -> ChartResult | None:
 
     chart = (
         alt.Chart(priced_df)
-        .mark_bar()
+        .mark_bar(
+            color='#1F7A70',
+            cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3,
+        )
         .encode(
             x=alt.X('ppp:Q', title='Price per person (£)', bin=alt.Bin(maxbins=30)),
             y=alt.Y('count():Q', title='Number of packages'),
             tooltip=[alt.Tooltip('count():Q', title='Packages')],
         )
-        .properties(height=300)
+        .properties(height=300, width='container')
+        .configure_view(strokeWidth=0)
     )
 
     return ChartResult(chart=chart)

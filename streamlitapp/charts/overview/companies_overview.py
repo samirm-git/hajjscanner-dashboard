@@ -26,16 +26,19 @@ def avg_ppp_by_company(df: pd.DataFrame, company_selection, company_domain) -> a
 
     chart = (
         alt.Chart(avg_ppp)
-        .mark_bar()
+      .mark_bar(cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3,)
         .encode(
-            x=alt.X('company:N', title='Company'),
+            x=alt.X('company:N', title='Company', axis=alt.Axis(labels=False, ticks=False)),
             y=alt.Y('avg_ppp:Q', title='Avg price per person (£)'),
             color=alt.Color('company:N',
                             scale=alt.Scale(domain=company_domain, scheme='tableau20'),
-                            legend=alt.Legend(title='Company',   titleAnchor='middle', orient='top', columns=2, offset=0)),
+                            legend=alt.Legend(title='Company', titleAnchor='middle', orient='top',
+                                               columns=2, labelLimit=140, offset=0)),
             opacity=alt.condition(company_selection, alt.value(1), alt.value(0.25)),
             tooltip=['company', alt.Tooltip('avg_ppp:Q', format=',.0f', title='Avg PPP (£)')]
         )
+        .properties(height=300, width='container')
         .add_params(company_selection)
     )
 
@@ -51,11 +54,15 @@ def packagecount_by_company(df: pd.DataFrame, company_selection, company_domain)
 
     chart = (alt.Chart(companyCounts).mark_arc()
              .encode(theta=alt.Theta(field="count", type="quantitative"),
-                    color=alt.Color(field="company", type="nominal", scale=alt.Scale(domain=company_domain, scheme='tableau20')),
+                    color=alt.Color(field="company", type="nominal", scale=alt.Scale(domain=company_domain, scheme='tableau20'),
+                                     legend=alt.Legend(title='Company', titleAnchor='middle', orient='top',
+                                                        columns=2, labelLimit=140, offset=0)),
                     opacity=alt.condition(company_selection, alt.value(1), alt.value(0.25)),
                     tooltip=[alt.Tooltip('company:N'), alt.Tooltip('count:Q'), alt.Tooltip('percent:Q', format='.1%')]
               
-              ).add_params(company_selection)
+              )
+              .properties(height=350, width='container')
+              .add_params(company_selection)
               )
 
 

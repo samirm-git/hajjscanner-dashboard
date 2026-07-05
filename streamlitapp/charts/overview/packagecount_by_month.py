@@ -32,7 +32,8 @@ def build(df: pd.DataFrame) -> ChartResult | None:
     if "season" in month_df.columns and month_df['season'].notna().any():
         available_seasons = [s for s in SEASON_ORDER if s in month_df['season'].dropna().unique()]
         encode_kwargs['color'] = alt.Color('season:N', title='Season', sort=available_seasons,
-                                            scale=alt.Scale(scheme='tableau10'))
+                                            scale=alt.Scale(scheme='tableau10'),
+                                            legend=alt.Legend(title='Season', titleAnchor='middle', orient='top', columns=4, offset=0))
         encode_kwargs['tooltip'] = [
             alt.Tooltip('month:N', title='Month'),
             alt.Tooltip('season:N', title='Season'),
@@ -41,7 +42,8 @@ def build(df: pd.DataFrame) -> ChartResult | None:
 
     chart = (
         alt.Chart(month_df)
-        .mark_bar()
+        .mark_bar(cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3,)
         .encode(**encode_kwargs)
         .properties(height=300)
     )

@@ -3,7 +3,7 @@ from company_page_builder import build_company_pages
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 
 def main():
-  st.set_page_config(page_title="HajjUmrahScanner", layout="wide", page_icon="🕋")
+  st.set_page_config(page_title="HajjUmrahScanner", layout="wide", initial_sidebar_state="auto", page_icon="🕋")
   
   pages = {"": [st.Page("pages/home.py", title="Home", url_path="home", default=True),],
           

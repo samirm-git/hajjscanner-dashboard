@@ -21,16 +21,31 @@ def build(df: pd.DataFrame) -> ChartResult | None:
 
     chart = (
         alt.Chart(avg_by_stars)
-        .mark_bar()
+        .mark_bar(
+            cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3,
+        )
         .encode(
-            x=alt.X('stars_label:N', title='Star rating', sort=star_order, axis=alt.Axis(labelAngle=0)),
+            x=alt.X(
+                'stars_label:N',
+                title='Star rating',
+                sort=star_order,
+                axis=alt.Axis(labelAngle=0),
+                scale=alt.Scale(paddingInner=0.45, paddingOuter=0.25),
+            ),
             y=alt.Y('avg_ppp:Q', title='Avg price per person (£)'),
+            color=alt.Color(
+                'stars:O',
+                scale=alt.Scale(scheme='teals'),
+                legend=None,
+            ),
             tooltip=[
                 alt.Tooltip('stars_label:N', title='Stars'),
                 alt.Tooltip('avg_ppp:Q', title='Avg PPP (£)', format=',.0f'),
             ],
         )
-        .properties(height=300)
+        .properties(height=300, width='container')
+        .configure_view(strokeWidth=0)
     )
 
     return ChartResult(chart=chart)

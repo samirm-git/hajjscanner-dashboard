@@ -14,7 +14,7 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
       filtered = filter_by_stars(filtered)
       filtered = filter_by_visa(filtered)
       filtered = filter_by_ziyarat(filtered)
-      filtered = filter_by_season_month(filtered)
+      filtered = filter_by_travel_time(filtered)
       filtered = filter_by_total_days(filtered)
       filtered = filter_by_amenities(filtered)
       filtered = filter_by_distanceToHaram(filtered)
@@ -78,8 +78,8 @@ def filter_by_ziyarat(df: pd.DataFrame) -> pd.DataFrame:
 
   return df
 
-def filter_by_season_month(df: pd.DataFrame) -> pd.DataFrame:
-  if "season" not in df.columns and "month" not in df.columns:
+def filter_by_travel_time(df: pd.DataFrame) -> pd.DataFrame:
+  if "season" not in df.columns and "month" not in df.columns and "year" not in df.columns:
       return df
 
   season_order = ["Spring", "Summer", "Autumn", "Winter"]
@@ -88,6 +88,16 @@ def filter_by_season_month(df: pd.DataFrame) -> pd.DataFrame:
 
   with st.container(border=True):
     st.markdown("**Travel timing**")
+
+    if "year" in df.columns:
+      available_years = sorted(df["year"].dropna().astype(int).unique().tolist())
+      if available_years:
+        selected_years = st.multiselect(
+            "Year", options=available_years, default=[], key="filter_year",
+            help="Leave empty to include all years (and packages with no year specified).",
+        )
+        if selected_years:
+          df = df.loc[df["year"].isin(selected_years) | df["year"].isna()]
 
     if "season" in df.columns:
       available_seasons = [s for s in season_order if s in df["season"].dropna().unique()]

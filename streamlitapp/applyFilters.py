@@ -2,6 +2,29 @@ import streamlit as st
 import pandas as pd
 
 cities = ["makkah", "madinah"]
+MAX_DISTANCE_TO_HARAM = 8000
+MAX_WALK_TO_HARAM = 40
+
+
+def _reset_filters():
+    # Widgets with a fixed default: set directly so the reset is visible immediately.
+    st.session_state["filter_shifting"] = "All"
+    st.session_state["filter_visaincluded"] = False
+    st.session_state["filter_ziyaratincluded"] = False
+    st.session_state["filter_year"] = []
+    st.session_state["filter_season"] = []
+    st.session_state["filter_month"] = []
+    st.session_state["filter_total_days"] = (0, 30)
+    st.session_state["filter_excluded_companies"] = []
+    for city in cities:
+        st.session_state[f"filter_{city}_has_ac"] = False
+        st.session_state[f"filter_{city}_has_wifi"] = False
+        st.session_state[f"filter_{city}_max_distance"] = MAX_DISTANCE_TO_HARAM
+        st.session_state[f"filter_{city}_walkToHaram"] = MAX_WALK_TO_HARAM
+ 
+    # filter_stars has a data-dependent default (all available stars), so just
+    # drop it and let the widget recompute its default from the data.
+    st.session_state.pop("filter_stars", None)
 
 def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
     base = df.dropna(subset=["company", "ppp"]) 
@@ -9,6 +32,8 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
 
     with st.  sidebar:
       st.header("🔍 Filters")
+      st.button("↺ Reset filters", key="reset_filters", on_click=_reset_filters) 
+
       filtered = filter_by_company_exclusions(filtered)
       filtered = filter_by_shifting(filtered)
       filtered = filter_by_stars(filtered)
@@ -148,10 +173,10 @@ def filter_by_amenities(df: pd.DataFrame) -> pd.DataFrame:
 
 def filter_by_distanceToHaram(df: pd.DataFrame) -> pd.DataFrame:
     def filter_by_city_distance(df: pd.DataFrame, city: str) -> pd.DataFrame:
-        max_distance = st.slider(city.title(), min_value=0, max_value=8_000, value=0, step=500, key=f"filter_{city}_max_distance", 
+        max_distance = st.slider(city.title(), min_value=0, max_value=MAX_DISTANCE_TO_HARAM, value=MAX_DISTANCE_TO_HARAM, step=500, key=f"filter_{city}_max_distance", 
                                  help=f"Only include packages where the {city.title()} hotel distance is known AND within this limit.",)
 
-        if max_distance > 0:
+        if max_distance < MAX_DISTANCE_TO_HARAM:
             distance_column = f"{city}_distanceToHaram"
             df = df.loc[df[distance_column].notna() & df[distance_column].le(max_distance)]
 
@@ -163,14 +188,14 @@ def filter_by_distanceToHaram(df: pd.DataFrame) -> pd.DataFrame:
         for city in cities:
             df = filter_by_city_distance(df, city)
 
-        st.caption("**Distance > 0 excludes packages where the distance is unknown.**")
+        st.caption(f"**Distance < {MAX_DISTANCE_TO_HARAM} excludes packages where the distance is unknown.**")
 
     return df
 
 def filter_by_walkToHaram(df: pd.DataFrame) -> pd.DataFrame:
   def filter_by_city_walkToHaram(df: pd.DataFrame, city: str) -> pd.DataFrame:
-      max_walk = st.slider(city.title(), min_value=0, max_value=40, value=0, step=2, key=f"filter_{city}_walkToHaram")
-      if max_walk > 0:
+      max_walk = st.slider(city.title(), min_value=0, max_value=MAX_WALK_TO_HARAM, value=MAX_WALK_TO_HARAM, step=2, key=f"filter_{city}_walkToHaram")
+      if max_walk < MAX_WALK_TO_HARAM:
          df = df.loc[df[f'{city}_walkToHaram'].notna() & df[f'{city}_walkToHaram'].le(max_walk)]
       
       return df
@@ -180,7 +205,7 @@ def filter_by_walkToHaram(df: pd.DataFrame) -> pd.DataFrame:
     for city in cities:
        df = filter_by_city_walkToHaram(df, city)
     
-    st.caption("**Walk time > 0 excludes packages where the walk time is unknown.**")
+    st.caption(f"**Walk time < {MAX_WALK_TO_HARAM} excludes packages where the walk time is unknown.**")
   
   return df
 

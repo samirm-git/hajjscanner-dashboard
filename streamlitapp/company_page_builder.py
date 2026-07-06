@@ -27,12 +27,7 @@ def _company_pages_map(hajj_or_umrah: HajjOrUmrahEnum) -> dict[str, st.Page]:
     was registered via st.navigation(), so recreating fresh st.Page objects
     with a matching url_path is not sufficient.
     """
-    try:
-        df = load_data(hajj_or_umrah)
-    except Exception as e:
-        st.error(f"Couldn't load {hajj_or_umrah.label} data: {e}")
-        return {}
-
+    df = load_data(hajj_or_umrah)
     companies = sorted(df['company'].dropna().unique())
 
     return {
@@ -46,11 +41,19 @@ def _company_pages_map(hajj_or_umrah: HajjOrUmrahEnum) -> dict[str, st.Page]:
 
 
 def build_company_pages(hajj_or_umrah: HajjOrUmrahEnum) -> list[st.Page]:
-    return list(_company_pages_map(hajj_or_umrah).values())
+    try:
+        return list(_company_pages_map(hajj_or_umrah).values())
+    except Exception as e:
+        st.error(f"Couldn't load {hajj_or_umrah.label} data: {e}")
+        return []
 
 
 def get_company_page(hajj_or_umrah: HajjOrUmrahEnum, company_name: str) -> st.Page | None:
     """Look up the same st.Page instance registered in navigation for a
     given company, so callers elsewhere in the app (e.g. overview.py) can
     build a working st.page_link/st.switch_page to it."""
-    return _company_pages_map(hajj_or_umrah).get(company_name)
+    try:
+        return _company_pages_map(hajj_or_umrah).get(company_name)
+    except Exception as e:
+        st.error(f"Couldn't load {hajj_or_umrah.label} data: {e}")
+        return None

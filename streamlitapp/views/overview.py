@@ -4,7 +4,7 @@ from functools import partial
 
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 from applyFilters import apply_package_filters
-from charts.overview import companies_overview, pacakgecount_by_ppp, ppp_vs_stars, packagecount_by_month
+from charts.overview import companies_overview, pacakgecount_by_ppp, ppp_vs_stars, packagecount_by_month, ppp_vs_years
 from company_page_builder import get_company_page
 from dataLoader import load_data
 from utils.render_chart import render_chart
@@ -61,3 +61,11 @@ def render_overview(hajj_or_umrah: HajjOrUmrahEnum):
         st.info("No packages with travel month data match the current filters.")
     else:
         render_chart(month_packagecount_result)
+    
+    st.divider()
+    st.subheader("📈 Average Price Over the Years")
+    ppp_vs_years_result = ppp_vs_years.build(df_filtered)
+    if ppp_vs_years_result is None:
+      st.info("No packages with price and year data match the current filters.")
+    else:
+      render_chart(ppp_vs_years_result)

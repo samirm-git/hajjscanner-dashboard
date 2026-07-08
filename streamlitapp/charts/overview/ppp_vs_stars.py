@@ -3,8 +3,8 @@ import altair as alt
 from charts.result_schema import ChartResult
 
 
-def build(df: pd.DataFrame) -> ChartResult | None:
-    """Simple bar chart of average price per person, grouped by star rating."""
+def build(df: pd.DataFrame, selection_name="ppp_vs_stars_select") -> ChartResult | None:
+    """Bar chart of average price per person, grouped by star rating, selectable by bar."""
     rated_df = df.dropna(subset=['ppp', 'stars'])
     if rated_df.empty:
         return None
@@ -18,6 +18,8 @@ def build(df: pd.DataFrame) -> ChartResult | None:
     )
     avg_by_stars['stars_label'] = avg_by_stars['stars'].apply(lambda s: '⭐' * s)
     star_order = avg_by_stars.sort_values('stars')['stars_label'].tolist()
+
+    selection = alt.selection_point(name=selection_name, fields=['stars'])
 
     chart = (
         alt.Chart(avg_by_stars)
@@ -39,13 +41,15 @@ def build(df: pd.DataFrame) -> ChartResult | None:
                 scale=alt.Scale(scheme='teals'),
                 legend=None,
             ),
+            opacity=alt.condition(selection, alt.value(1), alt.value(0.35)),
             tooltip=[
                 alt.Tooltip('stars_label:N', title='Stars'),
                 alt.Tooltip('avg_ppp:Q', title='Avg PPP (£)', format=',.0f'),
             ],
         )
+        .add_params(selection)
         .properties(height=300, width='container')
         .configure_view(strokeWidth=0)
     )
 
-    return ChartResult(chart=chart)
+    return ChartResult(chart=chart, selection_name=selection_name)

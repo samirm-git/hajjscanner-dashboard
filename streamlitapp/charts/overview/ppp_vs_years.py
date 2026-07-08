@@ -29,7 +29,7 @@ def build(df: pd.DataFrame) -> ChartResult | None:
 
     chart = (
         alt.Chart(avg_ppp_by_year)
-        .mark_line(point=True, strokeWidth=3)
+        .mark_line(point=True, strokeWidth=3, color='#1F7A70')
         .encode(
             x=alt.X("year:O", title="Year", sort=available_years, axis=alt.Axis(labelAngle=0)),
             y=alt.Y("avg_ppp:Q", title="Avg price per person (£)"),

@@ -22,9 +22,11 @@ def _reset_filters():
         st.session_state[f"filter_{city}_max_distance"] = MAX_DISTANCE_TO_HARAM
         st.session_state[f"filter_{city}_walkToHaram"] = MAX_WALK_TO_HARAM
  
-    # filter_stars has a data-dependent default (all available stars), so just
-    # drop it and let the widget recompute its default from the data.
-    st.session_state.pop("filter_stars", None)
+    old_counter = st.session_state.get("ppp_reset_counter", 0)
+    st.session_state.pop(f"filter_ppp_{old_counter}", None)
+    st.session_state["ppp_reset_counter"] = old_counter + 1
+
+    st.session_state.pop("filter_ppp", None)
 
 def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
     base = df.dropna(subset=["company", "ppp"]) 
@@ -36,11 +38,12 @@ def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
 
       filtered = filter_by_company_exclusions(filtered)
       filtered = filter_by_shifting(filtered)
+      filtered = filter_by_ppp(filtered)
       filtered = filter_by_stars(filtered)
       filtered = filter_by_visa(filtered)
       filtered = filter_by_ziyarat(filtered)
-      filtered = filter_by_travel_time(filtered)
       filtered = filter_by_total_days(filtered)
+      filtered = filter_by_travel_time(filtered)
       filtered = filter_by_amenities(filtered)
       filtered = filter_by_distanceToHaram(filtered)
       filtered = filter_by_walkToHaram(filtered)
@@ -67,6 +70,22 @@ def filter_by_shifting(df: pd.DataFrame) -> pd.DataFrame:
         return df.loc[df["isShifting"].eq(False)]
 
     return df
+
+def filter_by_ppp(df: pd.DataFrame) -> pd.DataFrame:
+  if "ppp" not in df.columns:
+    return df
+
+  max_ppp = int(df["ppp"].dropna().max())
+  if max_ppp <= 0:
+    return df
+  
+  reset_counter = st.session_state.get("ppp_reset_counter", 0)
+  ppp_slider = st.slider("Price per person", min_value=0, max_value=max_ppp, value=(0, max_ppp), step=500, key=f"filter_ppp_{reset_counter}", help="Adjust min and max values for price per person.",)
+
+  if ppp_slider[0] > 0 or ppp_slider[1] < max_ppp:
+     df = df.loc[df["ppp"].ge(ppp_slider[0]) & df["ppp"].le(ppp_slider[1])]
+
+  return df
 
 def filter_by_stars(df: pd.DataFrame) -> pd.DataFrame:
   available_stars = sorted(df["stars"].dropna().astype(int).unique().tolist())

@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
 from functools import partial
-from applyFilters import apply_package_filters
+from filters import apply_package_filters
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 from views.packagedetailpanel import expander_panel
 from charts.company import package_ppp, ppp_vs_days
 from utils.render_chart import render_chart
 from dataLoader import load_company_df
 
-def show_package_details_expander(point: dict, df:pd.Dataframe):
+def show_package_details_expander(point: dict, df:pd.DataFrame):
   matches = df[df['url'] == point['url']]
   if not matches.empty:
     expander_panel(matches.iloc[0])

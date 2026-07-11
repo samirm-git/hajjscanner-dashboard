@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from functools import partial
-from filters import apply_package_filters
+from views.filters import filter_sidebar
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 from views.packagedetailpanel import expander_panel
 from charts.company import package_ppp, ppp_vs_days
@@ -22,7 +22,7 @@ def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
       return
  
     total_unfiltered_count = len(company_df)
-    company_df_filtered = apply_package_filters(company_df)
+    company_df_filtered = filter_sidebar(company_df)
 
     st.title(company_name)
     with st.container(border=True):

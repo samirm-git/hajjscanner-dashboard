@@ -2,7 +2,7 @@ import streamlit as st
 from functools import partial
 
 from hajj_or_umrah_enum import HajjOrUmrahEnum
-from filters import apply_package_filters
+from views.filters import filter_sidebar
 from charts.overview import companies_overview, pacakgecount_by_ppp, ppp_vs_stars, packagecount_by_month, ppp_vs_years
 from dataLoader import load_data
 from utils.render_chart import render_chart
@@ -13,7 +13,7 @@ def render_overview(hajj_or_umrah: HajjOrUmrahEnum):
     st.title(f"{hajj_or_umrah.icon} {hajj_or_umrah.label} Package Dashboard")
 
     df = load_data(hajj_or_umrah)
-    df_filtered = apply_package_filters(df)
+    df_filtered = filter_sidebar(df)
  
     st.subheader("🔍 Package Providers Overview")
     companies_overview_result = companies_overview.build(df_filtered)

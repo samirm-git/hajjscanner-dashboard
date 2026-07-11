@@ -28,11 +28,11 @@ def _reset_filters():
 
     st.session_state.pop("filter_ppp", None)
 
-def apply_package_filters(df: pd.DataFrame) -> pd.DataFrame:
+def filter_sidebar(df: pd.DataFrame) -> pd.DataFrame:
     base = df.dropna(subset=["company", "ppp"]) 
     filtered = base
 
-    with st.  sidebar:
+    with st.sidebar:
       st.header("🔍 Filters")
       st.button("↺ Reset filters", key="reset_filters", on_click=_reset_filters) 
 
@@ -72,9 +72,9 @@ def filter_by_shifting(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def filter_by_ppp(df: pd.DataFrame) -> pd.DataFrame:
-  if "ppp" not in df.columns:
+  if "ppp" not in df.columns or df["ppp"].isna().all():
     return df
-
+  
   max_ppp = int(df["ppp"].dropna().max())
   if max_ppp <= 0:
     return df

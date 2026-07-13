@@ -1,9 +1,11 @@
 import streamlit as st
 
 SITE_DOMAIN = "hajjumrahscanner.com"
+DASHBOARD_REPO = "https://github.com/samirm-git/hajjscanner-dashboard"
+MAIN_REPO = "https://github.com/samirm-git/hajjscanner"
 
 def render_home():
-    st.title("🕋 Hajj+Umrah Scanner")
+    st.title("🕋 HajjUmrah Scanner")
     st.markdown(
         f"##### Compare Hajj & Umrah packages from providers across the web — "
         f"free at [{SITE_DOMAIN}](https://{SITE_DOMAIN})"
@@ -48,6 +50,27 @@ def render_home():
         "dedicated page for every company, with that company's full listing "
         "and company-specific charts."
     )
+
+    st.header("About")
+
+    st.write("""
+    This application is a **data dashboard for visualising Hajj and Umrah
+    packages**. It is built on data collected by the HajjScanner project,
+    enabling users to explore travel providers through interactive charts,
+    filtering tools and company-level dashboards.
+    """)
+
+    st.markdown(f"""
+    **GitHub**
+
+    - Dashboard: {DASHBOARD_REPO}
+    - Main project: {MAIN_REPO}
+    """)
+
+    st.caption(
+        "Built with Streamlit • Interactive dashboards powered by Plotly"
+    )
+
 
 if __name__ == "__main__":
     render_home()

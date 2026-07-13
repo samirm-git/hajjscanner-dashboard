@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from functools import partial
 from views.filters import filter_sidebar
 from hajj_or_umrah_enum import HajjOrUmrahEnum
@@ -8,8 +7,6 @@ from charts.shared import pacakgecount_by_ppp
 from charts.company import ppp_vs_days
 from utils.render_chart import render_chart
 from dataLoader import load_company_df
-
-
   
 @st.fragment
 def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):

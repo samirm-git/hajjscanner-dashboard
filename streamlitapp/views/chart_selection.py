@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 from views.packagedetailpanel import expander_panel
-from hajj_or_umrah_enum import HajjOrUmrahEnum
-from company_page_builder import get_company_page
 
 def _render_selection(matches: pd.DataFrame, caption: str, state_key: str, page_key: str):
     """Shared UI for a chart's click-through: paginate the matching packages
@@ -64,17 +62,3 @@ def show_packages_by_stars(point: dict, df: pd.DataFrame):
                       state_key='selected_stars_package_url',
                      page_key=f"stars-page-{stars}",
       )
-
-def show_link_to_company(point: dict, df: pd.DataFrame, hajj_or_umrah: HajjOrUmrahEnum):
-    company_name = point['company']
-    matches = df[df['company'] == company_name]
-    if matches.empty:
-        return
-
-    page = get_company_page(hajj_or_umrah, company_name)
-    if page is not None:
-        st.page_link(page, label=f"View {company_name} →", icon="🔗")
-    else:
-        # Shouldn't normally happen (company came from this same dataset),
-        # but fall back gracefully instead of crashing the dashboard.
-        st.info(company_name)

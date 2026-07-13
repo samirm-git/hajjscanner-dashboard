@@ -88,14 +88,14 @@ def filter_by_ppp(df: pd.DataFrame) -> pd.DataFrame:
   return df
 
 def filter_by_stars(df: pd.DataFrame) -> pd.DataFrame:
-  available_stars = sorted(df["stars"].dropna().astype(int).unique().tolist())
-  if not available_stars:
-      return df
-  
-  selected_stars = st.pills("Package Star rating", options=available_stars, default=available_stars, selection_mode="multi",
+  stars_list = list(range(1,6))
+  selected_stars = st.pills("Package Star rating", options=stars_list, default=stars_list, selection_mode="multi",
                               format_func=lambda x: f"{'⭐' * int(x)}",  key="filter_stars",)
 
-  return df.loc[df["stars"].isin(selected_stars)]
+  if "stars" not in df.columns:
+     return df
+  else:
+    return df.loc[df["stars"].isin(selected_stars)]
 
 def filter_by_total_days(df: pd.DataFrame) -> pd.DataFrame:
   total_days_slider = st.slider('Total Days', min_value=0, max_value=30, value=(0,30), step=1, key= f"filter_total_days", help="Adjust min and max values for total days. Default includes null values.")

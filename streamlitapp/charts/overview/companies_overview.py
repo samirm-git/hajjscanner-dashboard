@@ -2,9 +2,8 @@ import pandas as pd
 import altair as alt
 from charts.result_schema import ChartResult
 
-def build(df: pd.DataFrame, selection_name='company') -> ChartResult | None:
+def build(df: pd.DataFrame, company_domain, selection_name='company') -> ChartResult | None:
   company_selection = alt.selection_point(name=selection_name, fields=['company'])
-  company_domain = sorted(df['company'].dropna().unique().tolist())
 
   charts = [avg_ppp_by_company(df, company_selection, company_domain),
             packagecount_by_company(df, company_selection, company_domain)]

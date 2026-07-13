@@ -3,17 +3,15 @@ import pandas as pd
 from functools import partial
 from views.filters import filter_sidebar
 from hajj_or_umrah_enum import HajjOrUmrahEnum
-from views.packagedetailpanel import expander_panel
-from charts.company import package_ppp, ppp_vs_days
+from views.chart_selection import show_packages_in_bin
+from charts.shared import pacakgecount_by_ppp
+from charts.company import ppp_vs_days
 from utils.render_chart import render_chart
 from dataLoader import load_company_df
 
-def show_package_details_expander(point: dict, df:pd.DataFrame):
-  matches = df[df['url'] == point['url']]
-  if not matches.empty:
-    expander_panel(matches.iloc[0])
-  
 
+  
+@st.fragment
 def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
     """Renders a dedicated page for a single company."""
     company_df = load_company_df(company_name, hajj_or_umrah)
@@ -39,19 +37,18 @@ def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
         if len(company_df_filtered) != total_unfiltered_count:
             st.caption(f"*{len(company_df_filtered)} of {total_unfiltered_count} packages match the current filters.*")
  
- 
     st.divider()
-    st.subheader("📊 Price per person by package")
-    package_ppp_result = package_ppp.build(company_df_filtered)
-    if package_ppp_result is None:
-       st.info("No packages with price data match the current filters.")
+    st.subheader("💰 Price Distribution")
+    ppp_packagecount_result = pacakgecount_by_ppp.build(company_df_filtered, selection_name="company_ppp_count_bin")
+    if ppp_packagecount_result is None:
+        st.info("No company data based on current filters.")
     else:
-      render_chart(package_ppp_result,
-                 on_select=partial(show_package_details_expander, df=company_df_filtered),
-                 await_selection_message="👆 Click a bar to see that package's full details.")
+        render_chart(ppp_packagecount_result, on_select=partial(show_packages_in_bin, df=company_df_filtered),
+                                                  await_selection_message="👆 Click a bar to see the packages in that price range")
+
 
     st.divider()
-    st.subheader("📍 Price vs Trip Length")
+    st.subheader("⏳ Price vs Trip Length")
     ppp_vs_days_result = ppp_vs_days.build(company_df_filtered)
     if ppp_vs_days_result is None:
       st.info("No packages with both price and duration data match the current filters.")

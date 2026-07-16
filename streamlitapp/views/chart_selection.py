@@ -43,17 +43,17 @@ def _render_selection(matches: pd.DataFrame, caption: str, state_key: str, page_
             expander_panel(selected_match.iloc[0])
 
 
-def show_packages_in_bin(point: dict, df: pd.DataFrame):
-    bin_low, bin_high = point['bin_low'], point['bin_high']
-    matches = df[df['ppp'].ge(bin_low) & df['ppp'].lt(bin_high)].sort_values('ppp')
+def select_ppp_bin(point: dict, df: pd.DataFrame):
+    bin_start, bin_end = point['bin_start'], point['bin_end']
+    matches = df[df['ppp'].ge(bin_start) & df['ppp'].lt(bin_end)].sort_values('ppp')
  
     _render_selection(matches, 
-                      caption=f"Packages priced £{bin_low:,.0f}–£{bin_high:,.0f} (cheapest first):", 
+                      caption=f"Packages priced £{bin_start:,.0f}–£{bin_end:,.0f} (cheapest first):", 
                       state_key='selected_ppp_package_url', 
-                      page_key=f"ppp-bin-page-{bin_low}-{bin_high}",)
+                      page_key=f"ppp-bin-page-{bin_start}-{bin_end}",)
  
  
-def show_packages_by_stars(point: dict, df: pd.DataFrame):
+def select_stars_bin(point: dict, df: pd.DataFrame):
     stars = int(point['stars'])
     matches = df[df['stars'] == stars].sort_values('ppp')
  
@@ -62,3 +62,12 @@ def show_packages_by_stars(point: dict, df: pd.DataFrame):
                       state_key='selected_stars_package_url',
                      page_key=f"stars-page-{stars}",
       )
+
+def select_individual_package(point: dict, df: pd.DataFrame):
+    url = point['url']
+    match = df[df['url']==url].iloc[0]
+    expander_panel(match)
+
+def select_days_bin(point: dict, df:pd.DataFrame):
+
+    print(point)   

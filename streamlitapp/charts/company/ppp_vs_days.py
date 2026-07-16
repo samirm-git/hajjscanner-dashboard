@@ -3,7 +3,7 @@ import altair as alt
 from charts.result_schema import ChartResult
 
 
-def build(df: pd.DataFrame) -> ChartResult | None:
+def build(df: pd.DataFrame, selection_name="ppp_vs_days_select") -> ChartResult | None:
     """Average price per person grouped by trip-length bucket.
 
     Answers "does a longer trip cost proportionally more" via simple bars
@@ -30,6 +30,8 @@ def build(df: pd.DataFrame) -> ChartResult | None:
 
     if bucket_summary.empty:
         return None
+    
+    selection = alt.selection_point(name=selection_name, fields=['days_bucket'])
 
     chart = (
         alt.Chart(bucket_summary)
@@ -43,7 +45,8 @@ def build(df: pd.DataFrame) -> ChartResult | None:
                 alt.Tooltip('package_count:Q', title='Packages'),
             ],
         )
+        .add_params(selection)
         .properties(height=300)
     )
 
-    return ChartResult(chart=chart)
+    return ChartResult(chart=chart, selection_name=selection_name)

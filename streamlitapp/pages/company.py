@@ -1,11 +1,7 @@
 import streamlit as st
-from functools import partial
 from hajj_or_umrah_enum import HajjOrUmrahEnum
-from charts.company import ppp_vs_days
-from views.ppp_distribution import render_ppp_distribution
-from views.chart_selection import select_days_bin
+from views.shared_charts_view import render_ppp_distribution, render_ppp_by_shifting_status
 from views.filters import filter_sidebar
-from utils.render_chart import render_chart
 from dataLoader import load_company_df
   
 @st.fragment
@@ -36,6 +32,9 @@ def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
  
     st.divider()
     render_ppp_distribution(company_df_filtered, hajj_or_umrah) 
+
+    st.divider()
+    render_ppp_by_shifting_status(company_df_filtered, hajj_or_umrah)
 
     # st.divider()
     # st.subheader("⏳ Price vs Trip Length")

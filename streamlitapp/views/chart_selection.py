@@ -53,7 +53,7 @@ def select_ppp_bin(point: dict, df: pd.DataFrame):
                       page_key=f"ppp-bin-page-{bin_start}-{bin_end}",)
  
  
-def select_stars_bin(point: dict, df: pd.DataFrame):
+def select_stars_bar(point: dict, df: pd.DataFrame):
     stars = int(point['stars'])
     matches = df[df['stars'] == stars].sort_values('ppp')
  
@@ -67,3 +67,11 @@ def select_individual_package(point: dict, df: pd.DataFrame):
     url = point['url']
     match = df[df['url']==url].iloc[0]
     expander_panel(match)
+
+def select_isShifting_bar(point: dict, df: pd.DataFrame):
+    isShifting = point['isShifting']
+    matches = df[df['isShifting'] == isShifting ].sort_values('ppp')
+    
+    _render_selection(matches, caption=f"Packages shifting status: {isShifting} (cheapest first):",
+                      state_key="selected_isShifting_package_url",
+                      page_key=f"isShifting-page-{isShifting}")

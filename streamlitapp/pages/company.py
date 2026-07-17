@@ -37,11 +37,11 @@ def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
     st.divider()
     render_ppp_distribution(company_df_filtered, hajj_or_umrah) 
 
-    st.divider()
-    st.subheader("⏳ Price vs Trip Length")
-    ppp_vs_days_result = ppp_vs_days.build(company_df_filtered, hajj_or_umrah)
-    if ppp_vs_days_result is None:
-      st.info("No packages with both price and duration data match the current filters.")
-    else:
-      render_chart(ppp_vs_days_result, on_select=partial(select_days_bin, df=company_df_filtered),
-                  await_selection_message="👆 Click a bar to see the packages in that day range")
+    # st.divider()
+    # st.subheader("⏳ Price vs Trip Length")
+    # ppp_vs_days_result = ppp_vs_days.build(company_df_filtered, hajj_or_umrah)
+    # if ppp_vs_days_result is None:
+    #   st.info("No packages with both price and duration data match the current filters.")
+    # else:
+    #   render_chart(ppp_vs_days_result, on_select=partial(select_days_bin, df=company_df_filtered),
+    #               await_selection_message="👆 Click a bar to see the packages in that day range")

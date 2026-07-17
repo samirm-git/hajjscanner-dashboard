@@ -67,7 +67,3 @@ def select_individual_package(point: dict, df: pd.DataFrame):
     url = point['url']
     match = df[df['url']==url].iloc[0]
     expander_panel(match)
-
-def select_days_bin(point: dict, df:pd.DataFrame):
-
-    print(point)   

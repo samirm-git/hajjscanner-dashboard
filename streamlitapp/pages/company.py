@@ -39,7 +39,7 @@ def render_company(company_name, hajj_or_umrah: HajjOrUmrahEnum):
 
     st.divider()
     st.subheader("⏳ Price vs Trip Length")
-    ppp_vs_days_result = ppp_vs_days.build(company_df_filtered)
+    ppp_vs_days_result = ppp_vs_days.build(company_df_filtered, hajj_or_umrah)
     if ppp_vs_days_result is None:
       st.info("No packages with both price and duration data match the current filters.")
     else:

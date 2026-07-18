@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 import ast 
 from hajj_or_umrah_enum import HajjOrUmrahEnum
+import pyarrow.dataset as ds
+import pyarrow.fs as fs
 
 # import boto3
 # import os
@@ -46,10 +48,13 @@ from hajj_or_umrah_enum import HajjOrUmrahEnum
 #         return None, e
     
 
-HAJJ_DATA_URL = "https://hajjpackagedata.s3.eu-north-1.amazonaws.com/athena-results/allData/092aac6e-569a-48fd-9eb6-6ec98ffb999d.csv"
-UMRAH_DATA_URL = "https://umrahpackagedata.s3.eu-north-1.amazonaws.com/athena-results/allData/a6e5844c-b699-4cdc-a150-e1ce50804f68.csv"
+HAJJ_CSV_URL = "https://hajjpackagedata.s3.eu-north-1.amazonaws.com/athena-results/allData/092aac6e-569a-48fd-9eb6-6ec98ffb999d.csv"
+UMRAH_CSV_URL = "https://umrahpackagedata.s3.eu-north-1.amazonaws.com/athena-results/allData/a6e5844c-b699-4cdc-a150-e1ce50804f68.csv"
+CSV_URL_MAP = {HajjOrUmrahEnum.HAJJ: HAJJ_CSV_URL, HajjOrUmrahEnum.UMRAH: UMRAH_CSV_URL}
 
-URL_MAP = {HajjOrUmrahEnum.HAJJ: HAJJ_DATA_URL, HajjOrUmrahEnum.UMRAH: UMRAH_DATA_URL}
+HAJJ_PARQUET = ("hajjpackagedata", "athena-results/PARQUETallData/")
+UMRAH_PARQUET = ("umrahpackagedata", "athena-results/PARQUETallData/")
+PARQUET_URL_MAP = {HajjOrUmrahEnum.HAJJ: HAJJ_PARQUET, HajjOrUmrahEnum.UMRAH: UMRAH_PARQUET}
 
 def _parse_image_list(raw):
     """Parse a stored image-list field (e.g. stringified list) into a list of URLs."""
@@ -72,9 +77,18 @@ def _load_csv(url):
   
   return df
 
+def _load_parquet(bucket, prefix):
+    s3 = fs.S3FileSystem(region="eu-north-1", anonymous=True)
+    dataset = ds.dataset(f"{bucket}/{prefix}", filesystem=s3, format="parquet")
+    df = dataset.to_table().to_pandas()
+    # print(df.columns)
+    return df
+
 @st.cache_data
 def load_data(hajj_or_umrah: HajjOrUmrahEnum) -> pd.DataFrame:
-  return _load_csv(URL_MAP[hajj_or_umrah])
+  # return _load_csv(CSV_URL_MAP[hajj_or_umrah])
+  bucket, prefix = PARQUET_URL_MAP[hajj_or_umrah]
+  return _load_parquet(bucket, prefix)
 
 @st.cache_data
 def load_company_df(company_name: str, pilgrimage_type: HajjOrUmrahEnum) -> pd.DataFrame:

@@ -53,7 +53,7 @@ def filter_sidebar(df: pd.DataFrame) -> pd.DataFrame:
     return filtered
 
 def filter_by_shifting(df: pd.DataFrame) -> pd.DataFrame:
-    if "isShifting" not in df.columns:
+    if "isshifting" not in df.columns:
         return df
 
     choice = st.segmented_control(
@@ -64,10 +64,10 @@ def filter_by_shifting(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     if choice == "Shifting only":
-        return df.loc[df["isShifting"].eq(True)]
+        return df.loc[df["isshifting"].eq(True)]
 
     if choice == "Non-shifting only":
-        return df.loc[df["isShifting"].eq(False)]
+        return df.loc[df["isshifting"].eq(False)]
 
     return df
 

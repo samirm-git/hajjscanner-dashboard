@@ -1,0 +1,4 @@
+from views.overview import render_overview
+from hajj_or_umrah_enum import HajjOrUmrahEnum
+
+render_overview(HajjOrUmrahEnum.HAJJ)

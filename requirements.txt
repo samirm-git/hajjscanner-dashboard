@@ -1,5 +1,0 @@
-pandas
-# boto3
-streamlit
-streamlit-carousel
-python-dotenv

@@ -30,7 +30,7 @@ def render_overview(hajj_or_umrah: HajjOrUmrahEnum):
     st.title(f"{hajj_or_umrah.icon} {hajj_or_umrah.label} Package Dashboard")
 
     df = load_data(hajj_or_umrah)
-    company_domain = sorted(df['company'].dropna().unique().tolist())
+    company_domain = sorted(df['company'].unique().tolist())
     df_filtered = filter_sidebar(df)
  
     st.subheader("🔍 Package Providers Overview")

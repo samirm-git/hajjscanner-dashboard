@@ -85,7 +85,10 @@ def _s3_dataset(bucket, prefix):
 def load_data(hajj_or_umrah: HajjOrUmrahEnum) -> pd.DataFrame:
   # return _load_csv(CSV_URL_MAP[hajj_or_umrah])
   bucket, prefix = PARQUET_URL_MAP[hajj_or_umrah]
-  return _s3_dataset(bucket, prefix).to_table().to_pandas()
+  df = _s3_dataset(bucket, prefix).to_table().to_pandas()
+  df = df.dropna(subset=["company", "ppp"])
+  return df
+
 
 @st.cache_data
 def load_company_names(hajj_or_umrah: HajjOrUmrahEnum) -> list[str]:

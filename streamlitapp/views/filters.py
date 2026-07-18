@@ -29,8 +29,8 @@ def _reset_filters():
     st.session_state.pop("filter_ppp", None)
 
 def filter_sidebar(df: pd.DataFrame) -> pd.DataFrame:
-    base = df.dropna(subset=["company", "ppp"]) 
-    filtered = base
+    original_len = len(df)
+    filtered = df.copy()
 
     with st.sidebar:
       st.header("🔍 Filters")
@@ -48,7 +48,7 @@ def filter_sidebar(df: pd.DataFrame) -> pd.DataFrame:
       filtered = filter_by_distanceToHaram(filtered)
       filtered = filter_by_walkToHaram(filtered)
 
-      st.caption(f"*Showing {len(filtered)} of {len(base)} packages*")
+      st.caption(f"*Showing {len(filtered)} of {original_len} packages*")
 
     return filtered
 

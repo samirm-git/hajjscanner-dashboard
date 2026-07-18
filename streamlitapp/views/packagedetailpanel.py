@@ -10,10 +10,9 @@ def _split_present_and_missing(fields: list[tuple[str, str | None]]) -> tuple[li
 
 def _hotel_images(col, city, row):
     images = row.get(f"{city}_images") 
-    if images == None:
-       return
-    if images.empty:
-       return
+    if images is None or len(images) == 0:
+       return 
+
     with col:
       carousel(items=[{"img": url, "title": "", "text": ""} for url in images], width=1,)
 
@@ -26,7 +25,6 @@ def _hotel_card(col, city, row):
     distance = p("distancetoharam")
     walk = p("walktoharam")
     beds = p("numberofbeds")
-    images = p("images") or []
 
     city_emoji = "🕋" if city == "makkah" else "🕌"
     city_name = city.title()

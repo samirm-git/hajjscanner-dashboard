@@ -9,11 +9,13 @@ def _split_present_and_missing(fields: list[tuple[str, str | None]]) -> tuple[li
     return present_values, missing_field_names
 
 def _hotel_images(col, city, row):
-    images = row.get(f"{city}_images") or []
-
+    images = row.get(f"{city}_images") 
+    if images == None:
+       return
+    if images.empty:
+       return
     with col:
-      if isinstance(images, list) and images:
-        carousel(items=[{"img": url, "title": "", "text": ""} for url in images], width=1,)
+      carousel(items=[{"img": url, "title": "", "text": ""} for url in images], width=1,)
 
 def _hotel_card(col, city, row):
     p = lambda field: row.get(f"{city}_{field}")
@@ -21,9 +23,9 @@ def _hotel_card(col, city, row):
     name = p("name")
     stars = p("stars")
     total_days = p("total_days")
-    distance = p("distanceToHaram")
-    walk = p("walkToHaram")
-    beds = p("numberOfBeds")
+    distance = p("distancetoharam")
+    walk = p("walktoharam")
+    beds = p("numberofbeds")
     images = p("images") or []
 
     city_emoji = "🕋" if city == "makkah" else "🕌"
@@ -38,8 +40,8 @@ def _hotel_card(col, city, row):
     title_parts, missingFields = _split_present_and_missing(title_parts)
     missing_hotel_fields.extend(missingFields)
 
-    amenities = [('wifi', f"`wifi {'✅' if p('hasWifi') else '❌'}`" if pd.notna(p("hasWifi")) else "`wifi ?`"),
-                ('ac',f"`ac {'✅' if p('hasAC') else '❌'}`" if pd.notna(p("hasAC")) else "`ac ?`"),
+    amenities = [('wifi', f"`wifi {'✅' if p('haswifi') else '❌'}`" if pd.notna(p("haswifi")) else "`wifi ?`"),
+                ('ac',f"`ac {'✅' if p('hasac') else '❌'}`" if pd.notna(p("hasac")) else "`ac ?`"),
                 # ('number of beds', f"`🛏 {int(beds)} beds`" if pd.notna(beds) else None),
     ]
     amenities, missingFields = _split_present_and_missing(amenities)
@@ -83,9 +85,9 @@ def expander_panel(row, expanded=True):
         missing_meta_fields = [f for f in missing_meta_fields if f != 'islamicmonth']
 
     badges = []
-    if 'isShifting' in row.index:
-        badges.append('`Shifting`' if row.get('isShifting') else '`Non Shifting`')
-    badges.append('`✅ Visa Included`' if row.get('isVisaIncluded') else None)
+    if 'isshifting' in row.index:
+        badges.append('`Shifting`' if row.get('isshifting') else '`Non Shifting`')
+    badges.append('`✅ Visa Included`' if row.get('isvisaincluded') else None)
     if 'isziyaratincluded' in row.index:
         badges.append('`🕌 Ziyarat Included`' if row.get('isziyaratincluded') else None)
 

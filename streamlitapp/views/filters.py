@@ -20,7 +20,7 @@ def _reset_filters():
         st.session_state[f"filter_{city}_has_ac"] = False
         st.session_state[f"filter_{city}_has_wifi"] = False
         st.session_state[f"filter_{city}_max_distance"] = MAX_DISTANCE_TO_HARAM
-        st.session_state[f"filter_{city}_walkToHaram"] = MAX_WALK_TO_HARAM
+        st.session_state[f"filter_{city}_walktoharam"] = MAX_WALK_TO_HARAM
  
     old_counter = st.session_state.get("ppp_reset_counter", 0)
     st.session_state.pop(f"filter_ppp_{old_counter}", None)
@@ -108,7 +108,7 @@ def filter_by_total_days(df: pd.DataFrame) -> pd.DataFrame:
 def filter_by_visa(df: pd.DataFrame) -> pd.DataFrame:
   visabox = st.checkbox("Visa Included", key="filter_visaincluded")
   if visabox:
-     df = df.loc[df["isVisaIncluded"].eq(True)]
+     df = df.loc[df["isvisaincluded"].eq(True)]
 
   return df
 
@@ -175,10 +175,10 @@ def filter_by_amenities(df: pd.DataFrame) -> pd.DataFrame:
         has_wifi = st.checkbox("Wifi", key=f"filter_{city}_has_wifi")
 
         if has_ac:
-            df = df.loc[df[f"{city}_hasAC"].eq(True)]
+            df = df.loc[df[f"{city}_hasac"].eq(True)]
 
         if has_wifi:
-            df = df.loc[df[f"{city}_hasWifi"].eq(True)]
+            df = df.loc[df[f"{city}_haswifi"].eq(True)]
 
         return df
     
@@ -196,7 +196,7 @@ def filter_by_distanceToHaram(df: pd.DataFrame) -> pd.DataFrame:
                                  help=f"Only include packages where the {city.title()} hotel distance is known AND within this limit.",)
 
         if max_distance < MAX_DISTANCE_TO_HARAM:
-            distance_column = f"{city}_distanceToHaram"
+            distance_column = f"{city}_distancetoharam"
             df = df.loc[df[distance_column].notna() & df[distance_column].le(max_distance)]
 
         return df
@@ -213,9 +213,9 @@ def filter_by_distanceToHaram(df: pd.DataFrame) -> pd.DataFrame:
 
 def filter_by_walkToHaram(df: pd.DataFrame) -> pd.DataFrame:
   def filter_by_city_walkToHaram(df: pd.DataFrame, city: str) -> pd.DataFrame:
-      max_walk = st.slider(city.title(), min_value=0, max_value=MAX_WALK_TO_HARAM, value=MAX_WALK_TO_HARAM, step=2, key=f"filter_{city}_walkToHaram")
+      max_walk = st.slider(city.title(), min_value=0, max_value=MAX_WALK_TO_HARAM, value=MAX_WALK_TO_HARAM, step=2, key=f"filter_{city}_walktoharam")
       if max_walk < MAX_WALK_TO_HARAM:
-         df = df.loc[df[f'{city}_walkToHaram'].notna() & df[f'{city}_walkToHaram'].le(max_walk)]
+         df = df.loc[df[f'{city}_walktoharam'].notna() & df[f'{city}_walktoharam'].le(max_walk)]
       
       return df
   

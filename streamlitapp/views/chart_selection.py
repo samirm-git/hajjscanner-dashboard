@@ -69,8 +69,8 @@ def select_individual_package(point: dict, df: pd.DataFrame):
     expander_panel(match)
 
 def select_isShifting_bar(point: dict, df: pd.DataFrame):
-    isShifting = point['isShifting']
-    matches = df[df['isShifting'] == isShifting ].sort_values('ppp')
+    isShifting = point['isshifting']
+    matches = df[df['isshifting'] == isShifting ].sort_values('ppp')
     
     _render_selection(matches, caption=f"Packages shifting status: {isShifting} (cheapest first):",
                       state_key="selected_isShifting_package_url",

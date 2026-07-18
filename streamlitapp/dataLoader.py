@@ -77,18 +77,21 @@ def _load_csv(url):
   
   return df
 
-def _load_parquet(bucket, prefix):
+def _s3_dataset(bucket, prefix):
     s3 = fs.S3FileSystem(region="eu-north-1", anonymous=True)
-    dataset = ds.dataset(f"{bucket}/{prefix}", filesystem=s3, format="parquet")
-    df = dataset.to_table().to_pandas()
-    # print(df.columns)
-    return df
+    return ds.dataset(f"{bucket}/{prefix}", filesystem=s3, format="parquet")
 
 @st.cache_data
 def load_data(hajj_or_umrah: HajjOrUmrahEnum) -> pd.DataFrame:
   # return _load_csv(CSV_URL_MAP[hajj_or_umrah])
   bucket, prefix = PARQUET_URL_MAP[hajj_or_umrah]
-  return _load_parquet(bucket, prefix)
+  return _s3_dataset(bucket, prefix).to_table().to_pandas()
+
+@st.cache_data
+def load_company_names(hajj_or_umrah: HajjOrUmrahEnum) -> list[str]:
+    bucket, prefix = PARQUET_URL_MAP[hajj_or_umrah]
+    table = _s3_dataset(bucket, prefix).to_table(columns=['company'])
+    return sorted(table.column('company').drop_null().unique().to_pylist())
 
 @st.cache_data
 def load_company_df(company_name: str, pilgrimage_type: HajjOrUmrahEnum) -> pd.DataFrame:

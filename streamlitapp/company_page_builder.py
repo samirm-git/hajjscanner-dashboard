@@ -1,7 +1,7 @@
 import streamlit as st
 from pages.company import render_company
 from hajj_or_umrah_enum import HajjOrUmrahEnum
-from dataLoader import load_data
+from dataLoader import load_company_names
 
 def _slugify(name: str) -> str:
     return "".join(c if c.isalnum() else "-" for c in name.strip().lower()).strip("-")
@@ -27,9 +27,7 @@ def _company_pages_map(hajj_or_umrah: HajjOrUmrahEnum) -> dict[str, st.Page]:
     was registered via st.navigation(), so recreating fresh st.Page objects
     with a matching url_path is not sufficient.
     """
-    df = load_data(hajj_or_umrah)
-    companies = sorted(df['company'].dropna().unique())
-
+    companies = load_company_names(hajj_or_umrah)
     return {
         name: st.Page(
             _make_company_page(name, hajj_or_umrah),
@@ -37,7 +35,7 @@ def _company_pages_map(hajj_or_umrah: HajjOrUmrahEnum) -> dict[str, st.Page]:
             url_path=f"{hajj_or_umrah.value}-{_slugify(name)}",
         )
         for name in companies
-    }
+    } 
 
 
 def build_company_pages(hajj_or_umrah: HajjOrUmrahEnum) -> list[st.Page]:

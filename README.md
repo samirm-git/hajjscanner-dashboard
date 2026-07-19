@@ -15,15 +15,17 @@ An interactive data dashboard for exploring and comparing Hajj and Umrah package
 ## 📸 Screenshots
 
 
-![Package bar chart](assets/ppp_graph.png)
+![Home page](assets/homepage.png)
  
-![Package Provider Overview](assets/companies_chart.png)
+![Hajj Overview](assets/hajj_overview.png)
+
+![Umrah Overview](assets/umrah_overview.png)
 ---
 
 ## 🎬 Demo
 
 
-[![Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-blue)](https://drive.google.com/file/d/1kBf52qh8dXfil5Da-jpWjwo49E_FWX_i/view?usp=sharing)
+[![Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-blue)](https://drive.google.com/file/d/1iim1DXv-EmqWc8kNtY1h2UVG5JPbPnYb/view?usp=sharing)
 ---
 
 ## ✨ Features

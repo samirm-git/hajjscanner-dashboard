@@ -18,12 +18,12 @@ def show_link_to_company(point: dict, df: pd.DataFrame, hajj_or_umrah: HajjOrUmr
 
     page = get_company_page(hajj_or_umrah, company_name)
     if page is not None:
-        st.page_link(page, label=f"View {company_name} →", icon="🔗")
+        with st.container(border=True):
+            st.page_link(page, label=f"**View {company_name}**", icon="👉")
     else:
         # Shouldn't normally happen (company came from this same dataset),
         # but fall back gracefully instead of crashing the dashboard.
         st.info(company_name)
-
 
 @st.fragment
 def render_overview(hajj_or_umrah: HajjOrUmrahEnum):

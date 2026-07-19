@@ -1,6 +1,6 @@
 import streamlit as st
 from company_page_builder import build_company_pages
-from views.nav import render_nav
+from views.nav import render_nav, render_topbar
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 from concurrent.futures import ThreadPoolExecutor
 from dataLoader import load_company_names
@@ -22,6 +22,7 @@ def main():
   # st.navigation(pages).run()
   nav = st.navigation(pages, position="hidden")
   render_nav(pages)
+  render_topbar(pages)
   nav.run()
 
 

@@ -2,8 +2,6 @@ import streamlit as st
 from hajj_or_umrah_enum import HajjOrUmrahEnum
 
 def render_nav(pages):
-    st.markdown("""<style> ... same CSS as before ... </style>""", unsafe_allow_html=True)
-
     with st.sidebar:
         st.page_link(pages[""][0], icon="🏠")
 
@@ -15,6 +13,16 @@ def render_nav(pages):
 
         st.divider()
 
+def render_topbar(pages):
+    """Slim horizontal bar at the top of the main content area, linking to
+    Home / Hajj Overview / Umrah Overview from every page. Uses Streamlit's
+   """
+    with st.container(horizontal=True, horizontal_alignment="distribute"):
+        st.page_link(pages[""][0], label="Home", icon="🏠")
+        for hu in HajjOrUmrahEnum:
+            overview = pages[hu.label][0]
+            st.page_link(overview, label=f"{hu.label.capitalize()} Overview", icon=hu.icon)
+    st.divider()
 
 @st.fragment
 def _render_company_group(hu, companies):
